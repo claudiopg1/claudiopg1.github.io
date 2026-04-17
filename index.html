@@ -15,7 +15,7 @@
     --border2: rgba(100,140,200,0.22);
     --text: #e8edf5;
     --muted: #7a8ba8;
-    --accent: #5b9cf6;
+    --accent: #3a7bd5;
     --accent2: #a78bfa;
     --accent3: #34d399;
     --serif: 'DM Serif Display', Georgia, serif;
@@ -644,18 +644,18 @@
         -->
         <p style="font-size:13px;">Universidad Arturo Prat<br>Iquique, Chile</p>
       </div>
-      <form class="contact-form" onsubmit="handleSubmit(event)">
+      <form class="contact-form" action="https://formspree.io/f/mzdyrael" method="POST" onsubmit="handleSubmit(event)">
         <div class="form-field">
           <label>nombre</label>
-          <input type="text" placeholder="Tu nombre" required />
+          <input type="text" name="nombre" placeholder="Tu nombre" required />
         </div>
         <div class="form-field">
           <label>correo</label>
-          <input type="email" placeholder="tu@correo.com" required />
+          <input type="email" name="email" placeholder="tu@correo.com" required />
         </div>
         <div class="form-field">
           <label>mensaje</label>
-          <textarea placeholder="Tu mensaje..." required></textarea>
+          <textarea name="mensaje" placeholder="Tu mensaje..." required></textarea>
         </div>
         <button type="submit" class="form-submit">enviar →</button>
         <p id="form-msg" style="font-size:12px;color:#34d399;display:none;font-family:var(--mono);">// mensaje enviado</p>
