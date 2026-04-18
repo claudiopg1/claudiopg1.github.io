@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claudio Pérez — Theoretical Physics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg2: #111620;
+    --bg3: #181e2a;
+    --border: rgba(100,140,200,0.12);
+    --border2: rgba(100,140,200,0.22);
+    --text: #e8edf5;
+    --muted: #7a8ba8;
+    --accent: #3a7bd5;
+    --accent2: #a78bfa;
+    --accent3: #34d399;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(91,156,246,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,156,246,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,14,20,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* main layout */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* hero */
+  .hero {
+    padding: 130px 0 80px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 3rem;
+    align-items: start;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--text);
+  }
+  .hero-role {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  .hero-desc {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 12px;
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    color: var(--accent2);
+    letter-spacing: 0.05em;
+  }
+  .hero-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-size: 13px;
+    padding: 8px 18px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0e14;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+  .btn-primary:hover { background: #7ab0f8; border-color: #7ab0f8; }
+  .btn-ghost { color: var(--muted); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+
+  /* avatar */
+  .avatar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    color: var(--accent);
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(91,156,246,0.08), transparent);
+  }
+  .inst-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.08em;
+  }
+
+  /* sections */
+  section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  /* about */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .about-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem;
+  }
+  .about-card .num {
+    font-family: var(--serif);
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .about-card .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+  }
+  .about-text {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+  .about-text + .about-text { margin-top: 1rem; }
+
+  /* publications */
+  .pub-placeholder {
+    background: var(--bg2);
+    border: 1px dashed var(--border2);
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .pub-placeholder p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+  .pub-note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    margin-top: 0.5rem;
+    display: block;
+  }
+
+  /* project */
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .project-card:hover { border-color: var(--border2); }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .project-title {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    font-style: italic;
+  }
+  .project-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .project-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    color: var(--accent3);
+  }
+
+  /* cv */
+  .cv-section { margin-bottom: 2.5rem; }
+  .cv-section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .cv-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cv-item:last-child { border-bottom: none; }
+  .cv-year {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 100px;
+    padding-top: 3px;
+  }
+  .cv-content h3 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .cv-content p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* contact */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .contact-info p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+  .contact-email {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 1.5rem;
+    padding: 12px 16px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    transition: background 0.2s;
+  }
+  .contact-email:hover { background: var(--bg3); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 12px; }
+  .form-field { display: flex; flex-direction: column; gap: 5px; }
+  .form-field label { font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing: 0.05em; }
+  .form-field input,
+  .form-field textarea {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-field input:focus,
+  .form-field textarea:focus { border-color: var(--accent); }
+  .form-field textarea { height: 110px; resize: vertical; }
+  .form-submit {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 3px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-family: var(--mono);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    align-self: flex-start;
+  }
+  .form-submit:hover { background: var(--accent); color: var(--bg); }
+
+  /* folder tabs */
+  .folder-tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 1px solid var(--border2); }
+  .folder-tab {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background: var(--bg2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-right: 4px;
+    letter-spacing: 0.04em;
+  }
+  .folder-tab.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+  .folder-tab:hover:not(.active) { color: var(--text); }
+  .folder-panel { display: none; background: var(--bg3); border: 1px solid var(--border2); border-top: none; border-radius: 0 4px 4px 4px; padding: 1.5rem; }
+  .folder-panel.active { display: block; }
+  .folder-empty { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+  .folder-empty span { color: var(--accent2); display: block; margin-top: 6px; font-size: 11px; }
+
+  /* events / talks */
+  .event-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 90px;
+    padding-top: 3px;
+  }
+  .event-content h3 { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .event-content p { font-size: 13px; color: var(--muted); }
+  .event-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-workshop { background: rgba(167,139,250,0.12); color: var(--accent2); border: 1px solid rgba(167,139,250,0.25); }
+  .badge-poster { background: rgba(52,211,153,0.1); color: var(--accent3); border: 1px solid rgba(52,211,153,0.2); }
+  .badge-talk { background: rgba(58,123,213,0.12); color: var(--accent); border: 1px solid rgba(58,123,213,0.25); }
+  .section-empty { font-size: 14px; color: var(--muted); font-family: var(--mono); padding: 1.5rem 0; }
+  .section-empty span { color: var(--accent2); font-size: 11px; display: block; margin-top: 4px; }
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2.5rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.05em;
+  }
+
+  /* animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero > * { animation: fadeUp 0.6s ease both; }
+  .hero > *:nth-child(2) { animation-delay: 0.1s; }
+
+  /* responsive */
+  @media (max-width: 640px) {
+    nav { padding: 0 1rem; }
+    .nav-links { gap: 1.2rem; }
+    main { padding: 0 1.25rem; }
+    .hero { grid-template-columns: 1fr; padding: 100px 0 60px; }
+    .avatar-wrap { flex-direction: row; align-self: start; }
+    .about-grid { grid-template-columns: 1fr 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">cp://physics</a>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#publications">publications</a></li>
+    <li><a href="#research">research</a></li>
+    <li><a href="#cv">cv</a></li>
+    <li><a href="#events">events</a></li>
+    <li><a href="#talks">talks</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div>
+      <div class="hero-eyebrow">theoretical physics · UNAP</div>
+      <h1>Claudio<br><em>Pérez</em></h1>
+      <p class="hero-role">BSc in Physics · MSc Student in Theoretical Physics<br>Universidad Arturo Prat, Iquique, Chile</p>
+      <p class="hero-desc">
+        Investigating the asymptotic structure of gauge theories and gravity, with interests spanning flat holography, null structures, asymptotic symmetries, and their connections to memory effects and soft theorems.
+      </p>
+      <div class="hero-tags">
+        <span class="tag">high energy physics</span>
+        <span class="tag">gravitation</span>
+        <span class="tag">gauge fields</span>
+        <span class="tag">asymptotic symmetry</span>
+      </div>
+      <div class="hero-links">
+        <a href="#contact" class="btn btn-primary">contact</a>
+        <a href="#research" class="btn btn-ghost">view research →</a>
+        <a href="https://orcid.org/0009-0005-1522-5506" class="btn btn-ghost" target="_blank">ORCID ↗</a>
+      </div>
+    </div>
+    <div class="avatar-wrap">
+      <div class="avatar">CP</div>
+      <!-- To add your photo, replace the line above with:
+           <img src="photo.jpg" alt="Claudio Pérez" style="width:120px;height:120px;border-radius:4px;object-fit:cover;border:1px solid var(--border2);" />
+      -->
+      <span class="inst-badge">UNAP · Iquique</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">about</div>
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="num">MSc</div>
+        <div class="lbl">in progress · theoretical physics</div>
+      </div>
+      <div class="about-card">
+        <div class="num">UNAP</div>
+        <div class="lbl">Universidad Arturo Prat</div>
+      </div>
+    </div>
+    <p class="about-text">
+      I am Claudio Pérez, a physicist and current MSc student in Theoretical Physics at Universidad Arturo Prat, Iquique, Chile. My research lies at the intersection of high energy physics and gravitation, with a focus on the mathematical structures that emerge at the boundaries of spacetime.
+    </p>
+    <p class="about-text">
+      My interests center on the asymptotic structure of gauge theories and gravity — a rapidly developing area that connects several deep ideas in modern theoretical physics. This includes <strong style="color:var(--text);font-weight:500;">flat holography</strong>, which explores holographic dualities in asymptotically flat spacetimes; <strong style="color:var(--text);font-weight:500;">null structures</strong> and the geometry of null infinity; and <strong style="color:var(--text);font-weight:500;">asymptotic symmetries</strong> such as BMS and its extensions to gauge theories.
+    </p>
+    <p class="about-text">
+      A central thread in this program is the infrared triangle: the remarkable equivalence between asymptotic symmetries, soft theorems in quantum field theory, and gravitational or electromagnetic memory effects. Understanding these connections — and their generalizations — is a guiding motivation for my work.
+    </p>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section id="publications">
+    <div class="section-label">publications & notes</div>
+    <div class="folder-tabs">
+      <button class="folder-tab active" onclick="switchFolder('papers', this)">my papers</button>
+      <button class="folder-tab" onclick="switchFolder('notes', this)">personal notes</button>
+      <button class="folder-tab" onclick="switchFolder('classics', this)">classic papers</button>
+    </div>
+
+    <div id="folder-papers" class="folder-panel active">
+      <div class="folder-empty">
+        No papers yet.
+        <span>// files will appear here as: papers/paper-title.pdf</span>
+      </div>
+      <!--
+        To add a paper, copy this block inside this panel:
+        <div class="event-item">
+          <div class="event-date">2025</div>
+          <div class="event-content">
+            <h3>Paper title <span class="event-badge badge-talk">arXiv</span></h3>
+            <p>Authors · Journal</p>
+            <a href="papers/filename.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;" target="_blank">PDF ↗</a>
+          </div>
+        </div>
+      -->
+    </div>
+
+    <div id="folder-notes" class="folder-panel">
+      <div class="folder-empty">
+        Personal notes will appear here.
+        <span>// files will appear here as: notes/topic/filename.pdf</span>
+      </div>
+      <!--
+        To add a note, copy this block:
+        <div class="event-item">
+          <div class="event-date">2025</div>
+          <div class="event-content">
+            <h3>Note title</h3>
+            <p>Brief description · work in progress</p>
+            <a href="notes/topic/filename.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;" target="_blank">PDF ↗</a>
+          </div>
+        </div>
+      -->
+    </div>
+
+    <div id="folder-classics" class="folder-panel">
+      <div class="folder-empty">
+        Analyses of classic and foundational papers will appear here.
+        <span>// files will appear here as: classics/filename.pdf</span>
+      </div>
+      <!--
+        To add a classic paper analysis, copy this block:
+        <div class="event-item">
+          <div class="event-date">original year</div>
+          <div class="event-content">
+            <h3>Original paper title</h3>
+            <p>Authors · My analysis notes</p>
+            <a href="classics/filename.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;" target="_blank">My notes ↗</a>
+          </div>
+        </div>
+      -->
+    </div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section id="research">
+    <div class="section-label">research</div>
+    <div class="project-card">
+      <div class="project-title">Scalar Field Asymptotic Structure and the Dual Two Form</div>
+      <div class="project-desc">
+        Study of the asymptotic structure of a scalar field in gravity and its relationship to the dual two-form field. The analysis addresses boundary conditions at null infinity, the associated conserved charges, and the symmetries that emerge in the asymptotic limit — connecting with the BMS symmetry program and its generalizations.
+      </div>
+      <div class="project-meta">
+        <span class="meta-pill">ongoing</span>
+        <span class="meta-pill">gravitation</span>
+        <span class="meta-pill">scalar fields</span>
+        <span class="meta-pill">duality</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CV -->
+  <section id="cv">
+    <div class="section-label">curriculum vitae</div>
+
+    <div class="cv-section">
+      <div class="cv-section-title">education</div>
+      <div class="cv-item">
+        <div class="cv-year">ongoing</div>
+        <div class="cv-content">
+          <h3>MSc in Theoretical Physics</h3>
+          <p>Universidad Arturo Prat, Iquique, Chile</p>
+        </div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-year">previous</div>
+        <div class="cv-content">
+          <h3>BSc in Physics</h3>
+          <p>Universidad Andrés Bello, Santiago, Chile</p>
+          <a href="files/thesis/thesis.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;padding:5px 12px;" target="_blank">Thesis: Analysis of Integer and Half-Integer Spin Fields in the Randall-Sundrum Model ↗</a>
+          <!-- Make sure to upload your thesis to: files/thesis/thesis.pdf in your GitHub repository -->
+        </div>
+      </div>
+    </div>
+
+    <div class="cv-section">
+      <div class="cv-section-title">research interests</div>
+      <div class="cv-item">
+        <div class="cv-year">primary</div>
+        <div class="cv-content">
+          <h3>High Energy Physics</h3>
+          <p>Gravity, asymptotic symmetry, gauge fields</p>
+        </div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-year">secondary</div>
+        <div class="cv-content">
+          <h3>General Relativity</h3>
+          <p>Causal structure, null infinity, conserved charges</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add more sections (conferences, courses, etc.) following the same pattern -->
+
+  </section>
+
+  <!-- EVENTS -->
+  <section id="events">
+    <div class="section-label">events & workshops</div>
+    <div class="section-empty">
+      No events listed yet.
+      <span>// workshops, conferences, poster sessions, schools</span>
+    </div>
+    <!--
+      To add an event, copy this block:
+      <div class="event-item">
+        <div class="event-date">Month YYYY</div>
+        <div class="event-content">
+          <h3>Event name <span class="event-badge badge-workshop">workshop</span></h3>
+          <p>Institution · City, Country</p>
+        </div>
+      </div>
+
+      Available badges: badge-workshop / badge-poster / badge-talk
+    -->
+  </section>
+
+  <!-- TALKS -->
+  <section id="talks">
+    <div class="section-label">talks & lectures</div>
+    <div class="section-empty">
+      No talks listed yet.
+      <span>// seminars, lectures, contributed talks</span>
+    </div>
+    <!--
+      To add a talk, copy this block:
+      <div class="event-item">
+        <div class="event-date">Month YYYY</div>
+        <div class="event-content">
+          <h3>Talk title <span class="event-badge badge-talk">talk</span></h3>
+          <p>Event or seminar · Institution</p>
+          <a href="files/talks/slides.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;padding:5px 12px;" target="_blank">Slides ↗</a>
+        </div>
+      </div>
+    -->
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-label">contact</div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <p>For academic inquiries, collaboration opportunities, or questions about my research, feel free to reach out.</p>
+        <a href="mailto:claudperez@estudiantesunap.cl" class="contact-email">claudperez@estudiantesunap.cl</a>
+        <a href="https://orcid.org/0009-0005-1522-5506" class="btn btn-ghost" target="_blank" style="margin-bottom:1rem; display:inline-flex;">ORCID ↗</a>
+        <p style="font-size:13px;">Universidad Arturo Prat<br>Iquique, Chile</p>
+      </div>
+      <form class="contact-form" action="https://formspree.io/f/mzdyrael" method="POST">
+        <div class="form-field">
+          <label>name</label>
+          <input type="text" name="nombre" placeholder="Your name" required />
+        </div>
+        <div class="form-field">
+          <label>email</label>
+          <input type="email" name="email" placeholder="your@email.com" required />
+        </div>
+        <div class="form-field">
+          <label>message</label>
+          <textarea name="mensaje" placeholder="Your message..." required></textarea>
+        </div>
+        <button type="submit" class="form-submit">send →</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © 2025 Claudio Pérez · Universidad Arturo Prat · Iquique, Chile
+</footer>
+
+<script>
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('form-msg').style.display = 'block';
+    e.target.reset();
+    setTimeout(() => {
+      document.getElementById('form-msg').style.display = 'none';
+    }, 4000);
+  }
+
+  function switchFolder(id, btn) {
+    document.querySelectorAll('.folder-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.folder-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('folder-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // smooth active nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+    });
+  });
+</script>
+
+</body>
+</html>
