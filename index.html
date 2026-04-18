@@ -130,7 +130,7 @@
   }
   h1 em {
     font-style: italic;
-    color: var(--accent);
+    color: var(--text);
   }
   .hero-role {
     font-size: 14px;
@@ -449,7 +449,60 @@
   }
   .form-submit:hover { background: var(--accent); color: var(--bg); }
 
-  /* footer */
+  /* folder tabs */
+  .folder-tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 1px solid var(--border2); }
+  .folder-tab {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background: var(--bg2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-right: 4px;
+    letter-spacing: 0.04em;
+  }
+  .folder-tab.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+  .folder-tab:hover:not(.active) { color: var(--text); }
+  .folder-panel { display: none; background: var(--bg3); border: 1px solid var(--border2); border-top: none; border-radius: 0 4px 4px 4px; padding: 1.5rem; }
+  .folder-panel.active { display: block; }
+  .folder-empty { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+  .folder-empty span { color: var(--accent2); display: block; margin-top: 6px; font-size: 11px; }
+
+  /* events / talks */
+  .event-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 90px;
+    padding-top: 3px;
+  }
+  .event-content h3 { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .event-content p { font-size: 13px; color: var(--muted); }
+  .event-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-workshop { background: rgba(167,139,250,0.12); color: var(--accent2); border: 1px solid rgba(167,139,250,0.25); }
+  .badge-poster { background: rgba(52,211,153,0.1); color: var(--accent3); border: 1px solid rgba(52,211,153,0.2); }
+  .badge-talk { background: rgba(58,123,213,0.12); color: var(--accent); border: 1px solid rgba(58,123,213,0.25); }
+  .section-empty { font-size: 14px; color: var(--muted); font-family: var(--mono); padding: 1.5rem 0; }
+  .section-empty span { color: var(--accent2); font-size: 11px; display: block; margin-top: 4px; }
   footer {
     position: relative;
     z-index: 1;
@@ -491,6 +544,8 @@
     <li><a href="#publications">publications</a></li>
     <li><a href="#research">research</a></li>
     <li><a href="#cv">cv</a></li>
+    <li><a href="#events">events</a></li>
+    <li><a href="#talks">talks</a></li>
     <li><a href="#contact">contact</a></li>
   </ul>
 </nav>
@@ -504,12 +559,12 @@
       <h1>Claudio<br><em>Pérez</em></h1>
       <p class="hero-role">BSc in Physics · MSc Student in Theoretical Physics<br>Universidad Arturo Prat, Iquique, Chile</p>
       <p class="hero-desc">
-        Investigating the mathematical and physical foundations of gravity, with a focus on the asymptotic structure of scalar fields and the symmetry of dual two-form fields.
+        Investigating the asymptotic structure of gauge theories and gravity, with interests spanning flat holography, null structures, asymptotic symmetries, and their connections to memory effects and soft theorems.
       </p>
       <div class="hero-tags">
         <span class="tag">high energy physics</span>
         <span class="tag">gravitation</span>
-        <span class="tag">scalar fields</span>
+        <span class="tag">gauge fields</span>
         <span class="tag">asymptotic symmetry</span>
       </div>
       <div class="hero-links">
@@ -541,33 +596,78 @@
       </div>
     </div>
     <p class="about-text">
-      I am Claudio Pérez, a physicist and current MSc student in Theoretical Physics at Universidad Arturo Prat, Iquique, Chile. My research lies at the intersection of high energy physics and gravitation.
+      I am Claudio Pérez, a physicist and current MSc student in Theoretical Physics at Universidad Arturo Prat, Iquique, Chile. My research lies at the intersection of high energy physics and gravitation, with a focus on the mathematical structures that emerge at the boundaries of spacetime.
     </p>
     <p class="about-text">
-      I am particularly interested in the asymptotic structure of fields in general relativity, gauge symmetries at infinity, and the duality between scalar fields and two-form fields. These topics connect classical theoretical physics with deep questions about the nature of spacetime.
+      My interests center on the asymptotic structure of gauge theories and gravity — a rapidly developing area that connects several deep ideas in modern theoretical physics. This includes <strong style="color:var(--text);font-weight:500;">flat holography</strong>, which explores holographic dualities in asymptotically flat spacetimes; <strong style="color:var(--text);font-weight:500;">null structures</strong> and the geometry of null infinity; and <strong style="color:var(--text);font-weight:500;">asymptotic symmetries</strong> such as BMS and its extensions to gauge theories.
+    </p>
+    <p class="about-text">
+      A central thread in this program is the infrared triangle: the remarkable equivalence between asymptotic symmetries, soft theorems in quantum field theory, and gravitational or electromagnetic memory effects. Understanding these connections — and their generalizations — is a guiding motivation for my work.
     </p>
   </section>
 
   <!-- PUBLICATIONS -->
   <section id="publications">
-    <div class="section-label">publications</div>
-    <div class="pub-placeholder">
-      <p>Publications will be available soon.</p>
-      <p>Preprints and articles will be accessible in PDF format directly in this section.</p>
-      <span class="pub-note">// coming soon: arXiv · journals · preprints</span>
+    <div class="section-label">publications & notes</div>
+    <div class="folder-tabs">
+      <button class="folder-tab active" onclick="switchFolder('papers', this)">my papers</button>
+      <button class="folder-tab" onclick="switchFolder('notes', this)">personal notes</button>
+      <button class="folder-tab" onclick="switchFolder('classics', this)">classic papers</button>
     </div>
-    <!--
-      To add a publication, copy this block:
 
-      <div class="project-card" style="margin-top:1rem;">
-        <div class="project-title">Article title</div>
-        <div class="project-desc">Authors · Journal · Year</div>
-        <div class="project-meta">
-          <span class="meta-pill">PDF</span>
-          <span class="meta-pill">arXiv:XXXX.XXXXX</span>
-        </div>
+    <div id="folder-papers" class="folder-panel active">
+      <div class="folder-empty">
+        No papers yet.
+        <span>// files will appear here as: papers/paper-title.pdf</span>
       </div>
-    -->
+      <!--
+        To add a paper, copy this block inside this panel:
+        <div class="event-item">
+          <div class="event-date">2025</div>
+          <div class="event-content">
+            <h3>Paper title <span class="event-badge badge-talk">arXiv</span></h3>
+            <p>Authors · Journal</p>
+            <a href="papers/filename.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;" target="_blank">PDF ↗</a>
+          </div>
+        </div>
+      -->
+    </div>
+
+    <div id="folder-notes" class="folder-panel">
+      <div class="folder-empty">
+        Personal notes will appear here.
+        <span>// files will appear here as: notes/topic/filename.pdf</span>
+      </div>
+      <!--
+        To add a note, copy this block:
+        <div class="event-item">
+          <div class="event-date">2025</div>
+          <div class="event-content">
+            <h3>Note title</h3>
+            <p>Brief description · work in progress</p>
+            <a href="notes/topic/filename.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;" target="_blank">PDF ↗</a>
+          </div>
+        </div>
+      -->
+    </div>
+
+    <div id="folder-classics" class="folder-panel">
+      <div class="folder-empty">
+        Analyses of classic and foundational papers will appear here.
+        <span>// files will appear here as: classics/filename.pdf</span>
+      </div>
+      <!--
+        To add a classic paper analysis, copy this block:
+        <div class="event-item">
+          <div class="event-date">original year</div>
+          <div class="event-content">
+            <h3>Original paper title</h3>
+            <p>Authors · My analysis notes</p>
+            <a href="classics/filename.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;" target="_blank">My notes ↗</a>
+          </div>
+        </div>
+      -->
+    </div>
   </section>
 
   <!-- RESEARCH -->
@@ -604,7 +704,9 @@
         <div class="cv-year">previous</div>
         <div class="cv-content">
           <h3>BSc in Physics</h3>
-          <p>Universidad Andres Bello, Santiago, Chile</p>
+          <p>Universidad Andrés Bello, Santiago, Chile</p>
+          <a href="files/thesis/thesis.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;padding:5px 12px;" target="_blank">Thesis: Analysis of Integer and Half-Integer Spin Fields in the Randall-Sundrum Model ↗</a>
+          <!-- Make sure to upload your thesis to: files/thesis/thesis.pdf in your GitHub repository -->
         </div>
       </div>
     </div>
@@ -629,6 +731,47 @@
 
     <!-- Add more sections (conferences, courses, etc.) following the same pattern -->
 
+  </section>
+
+  <!-- EVENTS -->
+  <section id="events">
+    <div class="section-label">events & workshops</div>
+    <div class="section-empty">
+      No events listed yet.
+      <span>// workshops, conferences, poster sessions, schools</span>
+    </div>
+    <!--
+      To add an event, copy this block:
+      <div class="event-item">
+        <div class="event-date">Month YYYY</div>
+        <div class="event-content">
+          <h3>Event name <span class="event-badge badge-workshop">workshop</span></h3>
+          <p>Institution · City, Country</p>
+        </div>
+      </div>
+
+      Available badges: badge-workshop / badge-poster / badge-talk
+    -->
+  </section>
+
+  <!-- TALKS -->
+  <section id="talks">
+    <div class="section-label">talks & lectures</div>
+    <div class="section-empty">
+      No talks listed yet.
+      <span>// seminars, lectures, contributed talks</span>
+    </div>
+    <!--
+      To add a talk, copy this block:
+      <div class="event-item">
+        <div class="event-date">Month YYYY</div>
+        <div class="event-content">
+          <h3>Talk title <span class="event-badge badge-talk">talk</span></h3>
+          <p>Event or seminar · Institution</p>
+          <a href="files/talks/slides.pdf" class="btn btn-ghost" style="margin-top:8px;font-size:12px;padding:5px 12px;" target="_blank">Slides ↗</a>
+        </div>
+      </div>
+    -->
   </section>
 
   <!-- CONTACT -->
@@ -673,6 +816,13 @@
     setTimeout(() => {
       document.getElementById('form-msg').style.display = 'none';
     }, 4000);
+  }
+
+  function switchFolder(id, btn) {
+    document.querySelectorAll('.folder-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.folder-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('folder-' + id).classList.add('active');
+    btn.classList.add('active');
   }
 
   // smooth active nav highlight
