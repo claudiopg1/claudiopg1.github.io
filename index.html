@@ -566,6 +566,18 @@
   .hero > * { animation: fadeUp 0.6s ease both; }
   .hero > *:nth-child(2) { animation-delay: 0.1s; }
 
+  /* scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: opacity, transform;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* starfield canvas */
   #starfield {
     position: fixed;
@@ -991,24 +1003,31 @@
     btn.classList.add('active');
   }
 
-  // ── gravitational lensing starfield + black hole ────────────────────────
+  // ── starfield · black hole · gravitational waves · parallax ────────────
   (function () {
     const cvs = document.getElementById('starfield');
     const ctx = cvs.getContext('2d');
     let W, H, cx, cy, bhX, bhY;
 
-    // GM: gravitational parameter — controls orbit speed (lower = slower)
-    // EPS2: softening² — prevents singularity at the centre
     const GM        = 220;
     const EPS2      = 400;
     const N         = 120;
     const pool      = [];
 
-    // Black hole: secondary gravity source in upper-right, weaker influence
-    const BH_GM     = 85;   // lensing strength — enough to visibly bend paths
-    const BH_LENS_R = 160;  // influence radius (px)
-    const BH_R      = 15;   // event horizon radius (px)
-    let   bhTick    = 0;    // frame counter for photon-ring pulse
+    // Black hole
+    const BH_GM     = 85;
+    const BH_LENS_R = 160;
+    const BH_R      = 15;
+    let   bhTick    = 0;
+
+    // Gravitational waves: rings expanding from the black hole
+    const waves         = [];
+    const WAVE_INTERVAL = 220;  // frames between emissions (~3.7 s at 60 fps)
+    const WAVE_SPEED    = 0.85; // px per frame
+    const WAVE_MAX_R    = 260;  // remove ring once it reaches this radius from BH
+
+    // Canvas scrolls at this fraction of page-scroll speed (depth parallax)
+    const PARALLAX = 0.3;
 
     function resize() {
       W = cvs.width  = window.innerWidth;
@@ -1023,7 +1042,6 @@
       const a    = Math.random() * Math.PI * 2;
       const maxR = Math.max(W, H) * 0.72;
       const r    = 90 + Math.pow(Math.random(), 0.55) * (maxR - 90);
-      // Circular orbital speed with small radial scatter so orbits precess
       const v    = Math.sqrt(GM / Math.max(r, 60)) * (0.82 + Math.random() * 0.36);
       const vr   = (Math.random() - 0.5) * v * 0.18;
       return {
@@ -1042,17 +1060,22 @@
 
     function tick() {
       bhTick++;
+
+      // Spawn a new wave ring every WAVE_INTERVAL frames
+      if (bhTick % WAVE_INTERVAL === 0) waves.push({ r: BH_R + 2 });
+      for (let i = waves.length - 1; i >= 0; i--) {
+        waves[i].r += WAVE_SPEED;
+        if (waves[i].r > WAVE_MAX_R) waves.splice(i, 1);
+      }
+
       for (const s of pool) {
-        // Main centre gravity
         const dx  = cx - s.x, dy = cy - s.y;
         const r2  = dx * dx + dy * dy;
-        // Softened Newtonian gravity: a_vec = GM * r_vec / (|r|² + ε²)^(3/2)
         const inv = 1.0 / Math.sqrt(r2 + EPS2);
         const a   = GM * inv * inv * inv;
         s.vx += dx * a;
         s.vy += dy * a;
 
-        // Black hole lensing — applied only within influence radius
         const bdx = bhX - s.x, bdy = bhY - s.y;
         const br2 = bdx * bdx + bdy * bdy;
         if (br2 < BH_LENS_R * BH_LENS_R) {
@@ -1065,7 +1088,6 @@
         s.x  += s.vx;
         s.y  += s.vy;
 
-        // Respawn: escaped viewport, collapsed to main centre, or swallowed
         const rMain = Math.sqrt(r2);
         const rBH   = Math.sqrt(br2);
         if (rMain > Math.max(W, H) * 1.15 || rMain < 18 || rBH < BH_R + 1) {
@@ -1074,10 +1096,22 @@
       }
     }
 
-    function drawBlackHole() {
-      const pulse = 0.5 + 0.5 * Math.sin(bhTick * 0.022); // slow oscillation [0,1]
+    function drawWaves() {
+      const span = WAVE_MAX_R - BH_R;
+      ctx.lineWidth = 0.75;
+      for (const w of waves) {
+        const alpha = 0.15 * (1 - (w.r - BH_R) / span);
+        if (alpha <= 0) continue;
+        ctx.strokeStyle = `rgba(215,228,255,${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(bhX, bhY, w.r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
 
-      // Diffuse outer glow — simulates accretion disk halo
+    function drawBlackHole() {
+      const pulse = 0.5 + 0.5 * Math.sin(bhTick * 0.022);
+
       const halo = ctx.createRadialGradient(bhX, bhY, BH_R, bhX, bhY, BH_R + 34);
       halo.addColorStop(0,    `rgba(255,148,18,${(0.26 + pulse * 0.07).toFixed(3)})`);
       halo.addColorStop(0.40, `rgba(220,90,6,${(0.10 + pulse * 0.03).toFixed(3)})`);
@@ -1087,7 +1121,6 @@
       ctx.arc(bhX, bhY, BH_R + 34, 0, Math.PI * 2);
       ctx.fill();
 
-      // Photon ring — bright narrow band with glow
       ctx.save();
       ctx.shadowColor = `rgba(255,140,20,${(0.55 + pulse * 0.25).toFixed(3)})`;
       ctx.shadowBlur  = 7 + pulse * 5;
@@ -1098,7 +1131,6 @@
       ctx.stroke();
       ctx.restore();
 
-      // Event horizon — opaque dark disc
       ctx.fillStyle = '#03050b';
       ctx.beginPath();
       ctx.arc(bhX, bhY, BH_R, 0, Math.PI * 2);
@@ -1107,12 +1139,14 @@
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
+      // Shift the entire scene upward proportional to scroll — creates depth
+      ctx.save();
+      ctx.translate(0, -window.scrollY * PARALLAX);
+
       for (const s of pool) {
         const dx    = cx - s.x, dy = cy - s.y;
         const r     = Math.sqrt(dx * dx + dy * dy);
-        // Subtle lensing magnification: dots grow slightly near centre
         const lens  = 1 + Math.max(0, 1 - r / 160) * 1.5;
-        // Fade out dots very close to either gravitational point
         const bdx   = bhX - s.x, bdy = bhY - s.y;
         const bDist = Math.sqrt(bdx * bdx + bdy * bdy);
         const alpha = s.op * Math.min(1, r / 45) * Math.min(1, bDist / (BH_R + 8));
@@ -1123,8 +1157,12 @@
         ctx.arc(s.x, s.y, s.sz * lens, 0, 6.2832);
         ctx.fill();
       }
-      // Black hole drawn on top of stars
+
+      // Waves under, black hole on top
+      drawWaves();
       drawBlackHole();
+
+      ctx.restore();
     }
 
     function loop() { tick(); draw(); requestAnimationFrame(loop); }
@@ -1149,6 +1187,24 @@
       a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
     });
   });
+
+  // ── scroll reveal ─────────────────────────────────────────────────────────
+  (function () {
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: '-50px 0px' });
+
+    document.querySelectorAll('main section:not(.hero)').forEach(el => {
+      el.classList.add('reveal');
+      revealObs.observe(el);
+    });
+  }());
+  // ─────────────────────────────────────────────────────────────────────────
 </script>
 
 </body>
