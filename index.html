@@ -491,7 +491,7 @@
   .folder-panel .event-item {
     background: rgba(255,255,255,0.03);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
+    border-left: 3px solid #10b981;
     border-radius: 4px;
     padding: 0.9rem 1.2rem;
     margin-bottom: 8px;
@@ -500,8 +500,19 @@
   .folder-panel .event-item:last-child { border-bottom: 1px solid var(--border); margin-bottom: 0; }
   .folder-panel .event-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 22px rgba(58,123,213,0.2);
-    border-left-color: #7ab0f8;
+    box-shadow: 0 6px 22px rgba(16,185,129,0.2);
+    border-left-color: #34d399;
+  }
+  .folder-panel .btn-ghost {
+    color: #10b981;
+    border-color: #10b981;
+    background: rgba(16,185,129,0.06);
+  }
+  .folder-panel .btn-ghost:hover {
+    background: #10b981;
+    color: #0a0e14;
+    border-color: #10b981;
+    box-shadow: 0 0 14px rgba(16,185,129,0.4);
   }
 
   /* events / talks */
