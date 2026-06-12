@@ -36,6 +36,18 @@
     min-height: 100vh;
   }
 
+  /* scroll progress bar */
+  #scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    z-index: 999;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    pointer-events: none;
+    transition: width 0.08s linear;
+  }
+
   /* subtle grid background */
   body::before {
     content: '';
@@ -80,9 +92,21 @@
     color: var(--muted);
     text-decoration: none;
     letter-spacing: 0.03em;
-    transition: color 0.2s;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease;
   }
   .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { width: 100%; }
 
   /* main layout */
   main {
@@ -159,7 +183,34 @@
     border-radius: 2px;
     color: var(--accent2);
     letter-spacing: 0.05em;
+    position: relative;
+    cursor: default;
   }
+  .tag[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0c1220;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: normal;
+    line-height: 1.5;
+    white-space: normal;
+    width: 220px;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 200;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.55);
+  }
+  .tag[data-tooltip]:hover::after { opacity: 1; }
   .hero-links {
     display: flex;
     gap: 12px;
@@ -171,19 +222,26 @@
     border: 1px solid var(--border2);
     border-radius: 3px;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: box-shadow 0.4s ease, border-color 0.4s ease, background 0.3s ease, color 0.3s ease, transform 0.15s ease;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
   .btn-primary {
     background: var(--accent);
     color: #0a0e14;
     border-color: var(--accent);
     font-weight: 500;
+    animation: primaryPulse 1.3s ease 1s 1;
   }
-  .btn-primary:hover { background: #7ab0f8; border-color: #7ab0f8; }
+  .btn-primary:hover { background: #7ab0f8; border-color: #7ab0f8; box-shadow: 0 0 18px rgba(58,123,213,0.55), 0 2px 8px rgba(0,0,0,0.25); }
+  .btn-primary:active { box-shadow: 0 0 26px rgba(58,123,213,0.8), 0 1px 3px rgba(0,0,0,0.3); }
   .btn-ghost {
     color: var(--muted);
     border-color: rgba(100,140,200,0.35);
@@ -193,7 +251,10 @@
     color: var(--accent);
     border-color: var(--accent);
     background: rgba(58,123,213,0.12);
-    box-shadow: 0 0 14px rgba(58,123,213,0.35);
+    box-shadow: 0 0 16px rgba(58,123,213,0.4), 0 0 30px rgba(58,123,213,0.18), 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .btn-ghost:active {
+    box-shadow: 0 0 24px rgba(58,123,213,0.7), 0 0 42px rgba(58,123,213,0.28);
   }
 
   /* avatar */
@@ -277,6 +338,11 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 1.25rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .about-card:hover {
+    border-color: var(--border2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
   .about-card .num {
     font-family: var(--serif);
@@ -326,9 +392,9 @@
     padding: 2rem;
     position: relative;
     overflow: hidden;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
-  .project-card:hover { border-color: var(--border2); }
+  .project-card:hover { border-color: var(--border2); box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
   .project-card::before {
     content: '';
     position: absolute;
@@ -421,9 +487,9 @@
     padding: 12px 16px;
     border: 1px solid var(--border2);
     border-radius: 3px;
-    transition: background 0.2s;
+    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   }
-  .contact-email:hover { background: var(--bg3); }
+  .contact-email:hover { background: var(--bg3); border-color: var(--accent); box-shadow: 0 0 12px rgba(58,123,213,0.2); }
 
   .contact-form { display: flex; flex-direction: column; gap: 12px; }
   .form-field { display: flex; flex-direction: column; gap: 5px; }
@@ -453,10 +519,12 @@
     font-family: var(--mono);
     cursor: pointer;
     letter-spacing: 0.05em;
-    transition: all 0.2s;
+    transition: background 0.4s ease, color 0.3s ease, box-shadow 0.4s ease, transform 0.15s ease;
     align-self: flex-start;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
   }
-  .form-submit:hover { background: var(--accent); color: var(--bg); }
+  .form-submit:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 16px rgba(58,123,213,0.4), 0 2px 8px rgba(0,0,0,0.25); }
+  .form-submit:active { transform: translateY(1px); box-shadow: 0 0 24px rgba(58,123,213,0.65); }
 
   /* folder tabs */
   .folder-tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 1px solid var(--border2); }
@@ -470,7 +538,7 @@
     background: var(--bg2);
     color: #9aafc8;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     margin-right: 4px;
     letter-spacing: 0.04em;
   }
@@ -483,7 +551,7 @@
   }
   .folder-tab:hover:not(.active) { color: var(--text); background: rgba(100,140,200,0.08); }
   .folder-panel { display: none; background: var(--bg3); border: 1px solid var(--border2); border-top: none; border-radius: 0 4px 4px 4px; padding: 1.5rem; }
-  .folder-panel.active { display: block; }
+  .folder-panel.active { display: block; animation: panelFadeIn 0.3s ease both; }
   .folder-empty { font-size: 13px; color: var(--muted); font-family: var(--mono); }
   .folder-empty span { color: var(--accent2); display: block; margin-top: 6px; font-size: 11px; }
 
@@ -563,6 +631,15 @@
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  @keyframes primaryPulse {
+    0%   { box-shadow: 0 2px 8px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 0 rgba(58,123,213,0.7); }
+    55%  { box-shadow: 0 2px 8px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 12px rgba(58,123,213,0); }
+    100% { box-shadow: 0 2px 8px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 0 rgba(58,123,213,0); }
+  }
+  @keyframes panelFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
   .hero > * { animation: fadeUp 0.6s ease both; }
   .hero > *:nth-child(2) { animation-delay: 0.1s; }
 
@@ -604,6 +681,7 @@
 <body>
 
 <canvas id="starfield"></canvas>
+<div id="scroll-progress"></div>
 
 <nav>
   <a href="#" class="nav-logo">cp://physics</a>
@@ -630,10 +708,10 @@
         Investigating the asymptotic structure of gauge theories and gravity, with interests spanning flat holography, null structures, asymptotic symmetries, and their connections to memory effects and soft theorems.
       </p>
       <div class="hero-tags">
-        <span class="tag">high energy physics</span>
-        <span class="tag">gravitation</span>
-        <span class="tag">gauge fields</span>
-        <span class="tag">asymptotic symmetry</span>
+        <span class="tag" data-tooltip="Study of fundamental particles and forces at extreme energies">high energy physics</span>
+        <span class="tag" data-tooltip="The geometry of spacetime and its interaction with matter and energy">gravitation</span>
+        <span class="tag" data-tooltip="Fields with local symmetry invariance, fundamental to all forces in nature">gauge fields</span>
+        <span class="tag" data-tooltip="Symmetries that emerge at the boundary of spacetime at infinity">asymptotic symmetry</span>
       </div>
       <div class="hero-links">
         <a href="#contact" class="btn btn-primary">contact</a>
@@ -1183,10 +1261,14 @@
   }());
   // ─────────────────────────────────────────────────────────────────────────
 
-  // smooth active nav highlight
+  // scroll progress bar + active nav highlight
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
+  const scrollBar = document.getElementById('scroll-progress');
   window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    scrollBar.style.width = Math.min(pct * 100, 100) + '%';
+
     let current = '';
     sections.forEach(s => {
       if (window.scrollY >= s.offsetTop - 80) current = s.id;
